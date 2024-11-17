@@ -1,11 +1,14 @@
 import React from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
+import { logout } from "../store/slices/authSlice";
 
-export const NavBar = ({ isAuthenticated }) => {
+export const NavBar = () => {
+  const { isAuthenticated } = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
+
   const handleLogout = () => {
-    // Eliminar el token de localStorage y actualizar el estado
-    localStorage.removeItem("userToken");
-    window.location.reload(); // Recargar la página para reflejar el cambio
+    dispatch(logout());
   };
 
   return (

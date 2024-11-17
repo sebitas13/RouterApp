@@ -1,16 +1,19 @@
 import React, { useState } from "react";
+import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { login } from "../store/slices/authSlice";
 
 export const LoginPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const handleLogin = (e) => {
     e.preventDefault();
     // Lógica de autenticación simulada
-    if (email === "admin@gmail.com" && password === "admin") {
-      localStorage.setItem("userToken", "12345");
+    if (email === "a@a" && password === "a") {
+      dispatch(login({ email }));
       navigate("/profile");
     } else {
       alert("Invalid credentials");

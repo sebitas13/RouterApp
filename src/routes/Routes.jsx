@@ -7,57 +7,51 @@ import { RegisterPage } from "../pages/RegisterPage";
 import { AboutPage } from "../pages/AboutPage";
 import { Footer } from "../components/Footer";
 import { NotFoundPage } from "../pages/NotFoundPage";
-import { useEffect, useState } from "react";
+import { ProtectedRoute } from "../components/ProtectedRoute";
+import ErrorBoundary from "../components/ErrorBoundary";
 
-const MainLayout = () => {
-  // Función para verificar si el usuario está autenticado
-  const isAuthenticated = () => !!localStorage.getItem("userToken");
+// Rutas principales
 
-  // Estado de autenticación
-  const [auth, setAuth] = useState(isAuthenticated());
-
-  // Verificar el estado de autenticación al montar el componente
-  useEffect(() => {
-    const handleStorageChange = () => {
-      setAuth(isAuthenticated());
-    };
-
-    // Escuchar cambios en localStorage
-    window.addEventListener("storage", handleStorageChange);
-
-    // Comprobar la autenticación al principio
-    setAuth(isAuthenticated());
-
-    // Limpiar el listener cuando el componente se desmonta
-    return () => {
-      window.removeEventListener("storage", handleStorageChange);
-    };
-  }, []); // Este useEffect solo se ejecuta al montar el componente
-
-  return (
-    <>
-      <NavBar isAuthenticated={auth} />
-      <main>
-        <Outlet />
-      </main>
-      <Footer />
-    </>
-  );
-};
-
-const router = createBrowserRouter([
+const routes = [
   {
     path: "/",
-    element: <MainLayout />,
-    errorElement: <NotFoundPage />, // Manejo de rutas no encontradas
+    element: (
+      <>
+        <NavBar />
+        <main>
+          <Outlet />
+        </main>
+        <Footer />
+      </>
+    ),
     children: [
       { index: true, element: <HomePage /> },
       { path: "about", element: <AboutPage /> },
-      { path: "profile", element: <ProfilePage /> },
+      {
+        path: "profile",
+        element: (
+          <ProtectedRoute>
+            <ProfilePage />
+          </ProtectedRoute>
+        ),
+      },
       { path: "login", element: <LoginPage /> },
       { path: "register", element: <RegisterPage /> },
+      { path: "*", element: <NotFoundPage /> },
     ],
+    errorElement: <ErrorBoundary />,
   },
-]);
+];
+
+const router = createBrowserRouter(routes, {
+  future: {
+    v7_fetcherPersist: true,
+    v7_normalizeFormMethod: true,
+    v7_partialHydration: true,
+    v7_relativeSplatPath: true,
+    v7_skipActionErrorRevalidation: true,
+    v7_startTransition: true,
+  },
+});
 
 export default router;

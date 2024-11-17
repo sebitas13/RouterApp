@@ -1,5 +1,8 @@
 import React from "react";
+import { useSelector } from "react-redux";
 
 export const ProfilePage = () => {
-  return <h1>Your Profile</h1>;
+  const { user } = useSelector((state) => state.auth);
+
+  return <h1>User : {user}</h1>;
 };
